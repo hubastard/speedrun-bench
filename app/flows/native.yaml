@@ -53,8 +53,8 @@ tags: [lab, native]
     element: Item 80
 - tapOn: Item 80
 - assertVisible: "Picked: Item 80"
-# Two text fields (issue #8): a tap on the second moves the focus there, and what is typed next
-# goes to it.
+# Text fields (issue #8): a tap on the second moves the focus there, and what is typed next
+# goes to it; the third is tapped by the id on a box around it.
 - tapOn: Form
 - tapOn:
     id: native-email
@@ -65,6 +65,9 @@ tags: [lab, native]
     id: native-password
     focused: true
 - inputText: s3cret
+- tapOn:
+    id: native-code
+- inputText: '2468'
 - tapOn: Sign in
-- assertVisible: "Signed in as ada@example.com / s3cret"
+- assertVisible: "Signed in as ada@example.com / s3cret / 2468"
 - tapOn: Close form

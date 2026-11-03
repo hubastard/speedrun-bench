@@ -41,6 +41,7 @@ private struct LabScreen: View {
   @State private var form = false
   @State private var email = ""
   @State private var password = ""
+  @State private var code = ""
   @State private var signedIn = "Not signed in"
 
   var body: some View {
@@ -61,8 +62,10 @@ private struct LabScreen: View {
         .listStyle(.plain)
       }
     } else if form {
-      // Two text fields: a tap on the second moves the focus there, and the text typed next
-      // goes to it (speedrun issue #8).
+      // Text fields: a tap on the second moves the focus there, and the text typed next goes
+      // to it (speedrun issue #8). The third's identifier is on a container around it, as a
+      // design system's input puts it: the tap is on the container, and the field in it takes
+      // the focus.
       VStack(alignment: .leading, spacing: 8) {
         TextField("Email", text: $email)
           .textFieldStyle(.roundedBorder)
@@ -74,7 +77,16 @@ private struct LabScreen: View {
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled()
           .accessibilityIdentifier("native-password")
-        button("Sign in", "native-sign-in") { signedIn = "Signed in as \(email) / \(password)" }
+        VStack {
+          TextField("Code", text: $code)
+            .textFieldStyle(.roundedBorder)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+        }
+        .padding(4)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("native-code")
+        button("Sign in", "native-sign-in") { signedIn = "Signed in as \(email) / \(password) / \(code)" }
         Text(signedIn).accessibilityIdentifier("native-signed-in")
         button("Close form", "native-close-form") { form = false }
         Spacer(minLength: 0)

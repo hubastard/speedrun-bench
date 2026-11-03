@@ -7,6 +7,9 @@
 // still goes to the faded-out list (Android: a view at opacity 0 takes touches) or nowhere
 // (iOS: UIKit passes over it, and the form ignores the touch). The amount field is where the
 // list's last rows are.
+// Below, a field under a see-through layer that takes the first touch only, nothing on screen
+// or in the tree changing: a tap on the field is lost, as any tap can be (issue #8: a tap on a
+// Compose field that changed nothing), and only the next one gives it the focus.
 import React, { useRef, useState } from 'react';
 import { Animated, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -28,6 +31,8 @@ export function Transitions() {
   const [to, setTo] = useState<string>();
   const [amount, setAmount] = useState('');
   const [list, setList] = useState<'open' | 'closing' | 'closed'>('closed');
+  const [reference, setReference] = useState('');
+  const [catcher, setCatcher] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
 
   const open = () => {
@@ -57,6 +62,15 @@ export function Transitions() {
             value={amount} onChangeText={setAmount}
             style={[s.field, { color: c.text, borderColor: c.border, marginHorizontal: 16, height: ROW + 40 }]} />
           <Text testID="transfer-summary" style={{ color: c.text, margin: 16 }}>{`Send ${amount || 'nothing'} to ${to ?? 'nobody'}`}</Text>
+          <View>
+            <TextInput testID="transfer-reference" placeholder="Reference" placeholderTextColor={c.muted} autoCorrect={false}
+              autoCapitalize="none" value={reference} onChangeText={setReference}
+              style={[s.field, { color: c.text, borderColor: c.border, marginHorizontal: 16 }]} />
+            <View style={StyleSheet.absoluteFill} pointerEvents={catcher ? 'auto' : 'none'} accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants" onStartShouldSetResponder={() => true}
+              onResponderRelease={() => setCatcher(false)} />
+          </View>
+          <Text testID="transfer-reference-shown" style={{ color: c.text, margin: 16 }}>{`Reference: ${reference || 'none'}`}</Text>
         </View>
         {list !== 'closed' ? (
           <Animated.View testID="account-list" style={[StyleSheet.absoluteFill, { opacity, backgroundColor: c.bg }]}

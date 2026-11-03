@@ -96,6 +96,7 @@ private fun Lab() {
   var form by remember { mutableStateOf(false) }
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
+  var code by remember { mutableStateOf("") }
   var signedIn by remember { mutableStateOf("Not signed in") }
   LaunchedEffect(loads) {
     if (loads == 0) return@LaunchedEffect
@@ -125,12 +126,17 @@ private fun Lab() {
         }
       }
     } else if (form) {
-      // Two Material 3 text fields: a tap on the second moves the focus there, and the text
-      // typed next goes to it (speedrun issue #8).
+      // Material 3 text fields: a tap on the second moves the focus there, and the text typed
+      // next goes to it (speedrun issue #8). The third's test tag is on a box around it, as a
+      // design system's input puts it: the tap is on the box, and the field in it takes the
+      // focus.
       Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(email, { email = it }, Modifier.testTag("native-email"), label = { Text("Email") })
         OutlinedTextField(password, { password = it }, Modifier.testTag("native-password"), label = { Text("Password") })
-        Button(onClick = { signedIn = "Signed in as $email / $password" }, Modifier.testTag("native-sign-in")) { Text("Sign in") }
+        Box(Modifier.testTag("native-code").padding(4.dp)) {
+          OutlinedTextField(code, { code = it }, label = { Text("Code") })
+        }
+        Button(onClick = { signedIn = "Signed in as $email / $password / $code" }, Modifier.testTag("native-sign-in")) { Text("Sign in") }
         Text(signedIn, Modifier.testTag("native-signed-in"))
         Button(onClick = { form = false }, Modifier.testTag("native-close-form")) { Text("Close form") }
       }

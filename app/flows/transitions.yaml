@@ -4,6 +4,7 @@ name: A JavaScript stack's screen closing while the JavaScript thread is busy
 # list and keeps the JavaScript thread busy for 800 ms. The tree shows the form at once, but
 # until the JavaScript thread is done the closing list takes the touches (Android) or nothing
 # does (iOS), and the amount field is where the list's last rows were. A tap there must wait.
+# Then a tap on a field that is lost, the screen unchanged: tapped again.
 tags: [lab, transitions]
 ---
 - runFlow: _shared/guest.yaml
@@ -26,3 +27,9 @@ tags: [lab, transitions]
 - eraseText
 - inputText: '40'
 - assertVisible: 'Send 40 to Chequing'
+# The reference field's first touch goes to the see-through layer over it, and nothing changes
+# (the amount field keeps the focus): the field must be tapped again before typing.
+- tapOn:
+    id: transfer-reference
+- inputText: rent
+- assertVisible: 'Reference: rent'

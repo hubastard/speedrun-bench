@@ -41,11 +41,12 @@ The lab:
   indicator that comes and goes, all in boxes that never resize. SwiftUI animates on its own
   clock and decides itself what takes a touch: a button that springs in, a loading overlay
   that takes the taps for 1.5 s. And a lazy list, scrolled to its 80th row, and a form whose
-  second text field takes the focus from a tap.
+  second text field takes the focus from a tap, its third's test tag on a box around it.
 - **Transitions**: a list closing as React Navigation's JavaScript stack closed a screen before
   version 7, the JavaScript thread busy for 800 ms after the choice: the tree shows the form
   at once, while the faded-out list still takes the touches (Android) or nothing does (iOS),
-  where the amount field is.
+  where the amount field is. And a field under a see-through layer that takes its first touch,
+  nothing changing: a lost tap, the amount field keeping the focus.
 
 ## Running it
 
