@@ -26,6 +26,7 @@ export function Lab() {
       <Row testID="lab-popups-first" title="First order popups" onPress={() => { setState({ orders: 1 }); orderClosed(); }} />
       <Row testID="lab-popups-second" title="Second order popup" onPress={() => { setState({ orders: 2 }); orderClosed(); }} />
       <Row testID="lab-native" title="Native UI" onPress={() => nav.navigate('Native')} />
+      <Row testID="lab-transitions" title="Transitions" onPress={() => nav.navigate('Transitions')} />
     </Screen>
   );
 }

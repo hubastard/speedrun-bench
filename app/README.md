@@ -42,6 +42,10 @@ The lab:
   clock and decides itself what takes a touch: a button that springs in, a loading overlay
   that takes the taps for 1.5 s. And a lazy list, scrolled to its 80th row, and a form whose
   second text field takes the focus from a tap.
+- **Transitions**: a list closing as React Navigation's JavaScript stack closed a screen before
+  version 7, the JavaScript thread busy for 800 ms after the choice: the tree shows the form
+  at once, while the faded-out list still takes the touches (Android) or nothing does (iOS),
+  where the amount field is.
 
 ## Running it
 

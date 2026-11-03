@@ -1,0 +1,28 @@
+appId: dev.speedrun.bench
+name: A JavaScript stack's screen closing while the JavaScript thread is busy
+# The lab's Transitions screen (src/screens/Transitions.tsx): choosing an account closes the
+# list and keeps the JavaScript thread busy for 800 ms. The tree shows the form at once, but
+# until the JavaScript thread is done the closing list takes the touches (Android) or nothing
+# does (iOS), and the amount field is where the list's last rows were. A tap there must wait.
+tags: [lab, transitions]
+---
+- runFlow: _shared/guest.yaml
+- runFlow:
+    file: _shared/lab.yaml
+    env:
+      SCREEN: transitions
+- tapOn:
+    id: transfer-pick
+- tapOn: Account Savings
+- tapOn:
+    id: transfer-amount
+- inputText: '25'
+- assertVisible: 'Send 25 to Savings'
+- tapOn:
+    id: transfer-pick
+- tapOn: Account Chequing
+- tapOn:
+    id: transfer-amount
+- eraseText
+- inputText: '40'
+- assertVisible: 'Send 40 to Chequing'

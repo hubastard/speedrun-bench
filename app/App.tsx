@@ -18,6 +18,7 @@ import { Feed } from './src/screens/Feed';
 import { Drag, Gestures, LongList } from './src/screens/Gestures';
 import { Inputs } from './src/screens/Inputs';
 import { Animations, Lab, NativeLab, Scene } from './src/screens/Lab';
+import { Transitions } from './src/screens/Transitions';
 import { EditProfile, Pin, Profile, Settings } from './src/screens/Profile';
 import { Selectors } from './src/screens/Selectors';
 import { Cart, Checkout, OrderDone, ProductScreen, Shop } from './src/screens/Shop';
@@ -105,6 +106,7 @@ export default function App() {
                 <Stack.Screen name="Animations" component={Animations} />
                 <Stack.Screen name="Scene" component={Scene} />
                 <Stack.Screen name="Native" component={NativeLab} />
+                <Stack.Screen name="Transitions" component={Transitions} />
                 <Stack.Screen name="Gestures" component={Gestures} />
                 <Stack.Screen name="Drag" component={Drag} />
                 <Stack.Screen name="LongList" component={LongList} />
