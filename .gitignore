@@ -1,0 +1,5 @@
+# Build output anywhere (Gradle, Xcode), as in Speedrun's repository.
+build/
+.gradle/
+.kotlin/
+.DS_Store
