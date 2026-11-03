@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +34,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
@@ -131,10 +134,13 @@ private fun Lab() {
       // design system's input puts it: the tap is on the box, and the field in it takes the
       // focus.
       Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(email, { email = it }, Modifier.testTag("native-email"), label = { Text("Email") })
+        val emailFocus = remember { FocusRequester() }
+        LaunchedEffect(Unit) { emailFocus.requestFocus() }
+        OutlinedTextField(email, { email = it }, Modifier.testTag("native-email").focusRequester(emailFocus), label = { Text("Email") })
         OutlinedTextField(password, { password = it }, Modifier.testTag("native-password"), label = { Text("Password") })
-        Box(Modifier.testTag("native-code").padding(4.dp)) {
-          OutlinedTextField(code, { code = it }, label = { Text("Code") })
+        Column(Modifier.testTag("native-code").padding(4.dp)) {
+          Text("Code")
+          TextField(code, { code = it })
         }
         Button(onClick = { signedIn = "Signed in as $email / $password / $code" }, Modifier.testTag("native-sign-in")) { Text("Sign in") }
         Text(signedIn, Modifier.testTag("native-signed-in"))

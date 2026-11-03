@@ -6,7 +6,9 @@
 // (here 800 ms of work, in the task after the choice's), the tree shows the form while a tap
 // still goes to the faded-out list (Android: a view at opacity 0 takes touches) or nowhere
 // (iOS: UIKit passes over it, and the form ignores the touch). The amount field is where the
-// list's last rows are.
+// list's last rows are. The second choice starts all that after a pause of JavaScript
+// (GAP_MS, idle meanwhile), as a navigation's steps can come apart (speedrun issue #20): the
+// tree shows the form, and nothing moves or works, while the list still takes the touches.
 // Below, a field under a see-through layer that takes the first touch only, nothing on screen
 // or in the tree changing: a tap on the field is lost, as any tap can be (issue #8: a tap on a
 // Compose field that changed nothing), and only the next one gives it the focus.
@@ -19,6 +21,7 @@ const ACCOUNTS = ['Chequing', 'Savings', 'Travel', 'Business', 'Credit card'];
 const ROW = 70;
 const BUSY_MS = 800;
 const FADE_MS = 250;
+const GAP_MS = 150;
 
 // Blocks the JavaScript thread, as a slow device's rendering and queries do.
 function busy(ms: number) {
@@ -34,6 +37,7 @@ export function Transitions() {
   const [reference, setReference] = useState('');
   const [catcher, setCatcher] = useState(true);
   const opacity = useRef(new Animated.Value(0)).current;
+  const picks = useRef(0);
 
   const open = () => {
     Keyboard.dismiss(); // as a picker does
@@ -43,8 +47,13 @@ export function Transitions() {
   const choose = (name: string) => {
     setTo(name);
     setList('closing');
-    Animated.timing(opacity, { toValue: 0, duration: FADE_MS, useNativeDriver: true }).start(() => setList('closed'));
-    setTimeout(() => busy(BUSY_MS), 0);
+    const close = () => {
+      Animated.timing(opacity, { toValue: 0, duration: FADE_MS, useNativeDriver: true }).start(() => setList('closed'));
+      setTimeout(() => busy(BUSY_MS), 0);
+    };
+    picks.current += 1;
+    if (picks.current % 2 === 0) setTimeout(close, GAP_MS);
+    else close();
   };
 
   return (
