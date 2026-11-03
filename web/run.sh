@@ -16,7 +16,7 @@ APP="${1:?usage: ./run.sh todomvc|rwa [tool...]}"
 shift
 RUNS="${RUNS:-3}"
 OUT="${OUT:-$APP}"
-SPEEDRUN="$(cd ../.. && pwd)/speedrun"
+SPEEDRUN="${SPEEDRUN:-$(cd ../.. && pwd)/speedrun}"
 export MAESTRO_CLI_NO_ANALYTICS=1 MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED=true CYPRESS_CRASH_REPORTS=0
 case "$APP" in
   # Playwright's default viewport for every tool; the Real World App's own Cypress viewport.

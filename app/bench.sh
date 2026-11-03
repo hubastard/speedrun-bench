@@ -30,12 +30,12 @@ CMD="${1:?$USAGE}"
 PLATFORM="${2:-}"
 [ "$CMD" = hash ] || { [ -n "$PLATFORM" ] || { echo "$USAGE"; exit 1; }; }
 shift $(($# < 2 ? $# : 2))
-SPEEDRUN="$(cd ../.. && pwd)/speedrun"
+SPEEDRUN="${SPEEDRUN:-$(cd ../.. && pwd)/speedrun}"
 APP_ID=dev.speedrun.bench
 RESULTS="${RESULTS:-results}"
 mkdir -p "$RESULTS"
 # Prebuilt apps: assets of the bench-app release, named after the hash of the sources.
-REPO="${BENCH_REPO:-hubastard/speedrun}"
+REPO="${BENCH_REPO:-hubastard/speedrun-bench}"
 RELEASE=bench-app
 PREBUILT=prebuilt
 

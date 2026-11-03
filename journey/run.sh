@@ -17,7 +17,7 @@ PLATFORM="${1:?usage: ./run.sh android|ios [tool...]}"
 shift
 RUNS="${RUNS:-3}"
 APP_ID=dev.speedrun.bench
-SPEEDRUN="$(cd ../.. && pwd)/speedrun"
+SPEEDRUN="${SPEEDRUN:-$(cd ../.. && pwd)/speedrun}"
 ARGENT=../agents/node_modules/.bin/argent
 IOS_APP=../app/prebuilt/SpeedrunBench.app
 mkdir -p results

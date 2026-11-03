@@ -61,7 +61,7 @@ Maestro ran the same flow files as Speedrun:
 ### On Linux, in Chrome and Firefox
 
 A GitHub Actions `ubuntu-24.04` runner (4 vCPUs), 2026-11-03, run by
-[`bench-web.yml`](../../.github/workflows/bench-web.yml): the same tests, conditions and
+[`bench-web.yml`](https://github.com/hubastard/speedrun/blob/main/.github/workflows/bench-web.yml) (in Speedrun's repository): the same tests, conditions and
 medians as above, each tool with its own builds of the browsers (every run's output:
 [`results/linux`](results/linux)). A shared runner is slower than the Mac, and its times vary
 more from day to day: compare the tools within a table.
