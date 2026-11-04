@@ -1,0 +1,25 @@
+appId: dev.speedrun.flutterbench
+name: Popups
+---
+# What Flutter draws in its own overlay: a dialog, a modal bottom sheet with a long list
+# (scrolled, then a row tapped), a snack bar's action, a popup menu, a dropdown menu.
+- launchApp
+- tapOn: Popups
+- tapOn: Show dialog
+- assertVisible: Delete draft?
+- tapOn: Delete
+- assertVisible: Draft deleted
+- tapOn: Show sheet
+- scrollUntilVisible:
+    element: Account 30
+- tapOn: Account 30
+- assertVisible: Picked Account 30
+- tapOn: Archive message
+- tapOn: Undo
+- assertVisible: Message restored
+- tapOn: More
+- tapOn: Rename
+- assertVisible: Chose Rename
+- tapOn: Apple
+- tapOn: Cherry
+- assertVisible: "Fruit: Cherry"

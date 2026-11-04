@@ -9,6 +9,7 @@ clone. The scripts find `speedrun` there (`../../speedrun`); outside a Speedrun 
 | Folder | |
 |---|---|
 | [`app/`](app) | **Speedrun Bench**, a React Native (Expo) app built to trip up UI test tools, and its 21 flows: Speedrun's regression suite on Android and iOS, and its benchmark against Maestro. |
+| [`flutter/`](flutter) | **Flutter Bench**, a Flutter app with the Flutter patterns UI test tools trip on, and its 8 flows, on Android and iOS. |
 | [`journey/`](journey) | One user journey on Speedrun Bench with each black-box test tool: Speedrun, Maestro, Appium, maestro-runner, Argent, XCUITest. |
 | [`web/`](web) | The web benchmark: Speedrun, Playwright, Cypress and Maestro on TodoMVC and Cypress's Real World App, in Chrome and Firefox. |
 | [`agents/`](agents) | AI agents trying out a feature through each tool's MCP server. |

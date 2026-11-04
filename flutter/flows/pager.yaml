@@ -1,0 +1,24 @@
+appId: dev.speedrun.flutterbench
+name: Pager
+---
+# Sideways paging: a PageView turned by a swipe and by its button, and swiping tabs (a
+# tab's label carries "Tab 2 of 3").
+- launchApp
+- tapOn: Pager
+- swipe:
+    from: Welcome aboard
+    direction: LEFT
+- assertVisible: Track your runs
+- assertVisible: Page 2 of 3
+- tapOn: Next
+- assertVisible: Share your times
+- tapOn: "Sent.*"
+- assertVisible: Sent message 1
+# Across the screen: TabBarView turns the tab only past half its width.
+- swipe:
+    start: 90%, 75%
+    end: 10%, 75%
+- assertVisible: Drafts message 1
+- assertVisible:
+    text: "Drafts.*"
+    selected: true

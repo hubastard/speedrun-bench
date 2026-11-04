@@ -1,0 +1,33 @@
+appId: dev.speedrun.flutterbench
+name: Navigation
+---
+# A bottom navigation bar whose tabs keep their state, a drawer, and a nested screen left
+# with the system back (Android) or the app bar's (iOS has no system back).
+- launchApp
+- tapOn: Navigation
+- tapOn: "Search.*"
+- tapOn: Search
+- inputText: flutter
+# The keyboard covers the navigation bar.
+- hideKeyboard
+- tapOn: "Profile.*"
+- assertVisible: Ada Lovelace
+- tapOn: "Search.*"
+- assertVisible: flutter
+- tapOn: "Home.*"
+- tapOn: Open navigation menu
+- tapOn: Help
+- assertVisible: Opened Help
+- tapOn: Open nested screen
+- assertVisible: Deep in the stack
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: Back
+- assertVisible: Home tab

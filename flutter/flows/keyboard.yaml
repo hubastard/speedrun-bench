@@ -1,0 +1,32 @@
+appId: dev.speedrun.flutterbench
+name: Keyboard
+---
+# A form longer than the screen: fields under the keyboard, a multiline field, a number
+# field, and the Save button below them all.
+- launchApp
+- tapOn: Keyboard
+- tapOn: Field 1
+- inputText: First
+# The keyboard covers the lower fields: scrolled to with it up.
+- scrollUntilVisible:
+    element: Field 8
+- tapOn: Field 8
+- inputText: Eighth
+# iOS: a single-line field's keyboard has a Done key.
+- hideKeyboard
+- scrollUntilVisible:
+    element: Notes
+- tapOn: Notes
+- inputText: Two words
+# A multiline field's keyboard has no key that closes it on iOS: a tap outside the fields
+# does, in this app.
+- tapOn: Keyboard
+- scrollUntilVisible:
+    element: Amount
+- tapOn: Amount
+- inputText: "42"
+- tapOn: Keyboard
+- scrollUntilVisible:
+    element: Save
+- tapOn: Save
+- assertVisible: "Saved: First / Eighth / Two words / 42"

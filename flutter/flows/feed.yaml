@@ -1,0 +1,25 @@
+appId: dev.speedrun.flutterbench
+name: Feed
+---
+# A lazy list (rows built as they scroll in) whose rows merge their texts into one label,
+# pull to refresh, a pushed screen with a Hero, and an icon button known by its tooltip.
+- launchApp
+- tapOn: Feed
+- swipe:
+    start: 50%, 25%
+    end: 50%, 75%
+- assertVisible: ".*Fresh article 1.*"
+- scrollUntilVisible:
+    element: ".*Article 60.*"
+- tapOn: ".*Article 60.*"
+- assertVisible: "Likes: 0"
+- tapOn: Like
+- tapOn: Like
+- assertVisible: "Likes: 2"
+- tapOn: Back
+- assertVisible: ".*Article 60.*"
+# Flutter cuts a row's frame to the list's edge: a row partly scrolled away reads as fully
+# shown, so the list can stop short of its top here.
+- scrollUntilVisible:
+    element: ".*Fresh article 1.*"
+    direction: UP

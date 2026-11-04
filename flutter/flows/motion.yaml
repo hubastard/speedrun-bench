@@ -1,0 +1,19 @@
+appId: dev.speedrun.flutterbench
+name: Motion
+---
+# A progress bar that never stops, a result that comes in late, items animated into a
+# list, and a tap that blocks the UI thread before the screen changes.
+- launchApp
+- tapOn: Motion
+- tapOn: Tap while spinning
+- tapOn: Tap while spinning
+- assertVisible: "Taps: 2"
+- tapOn: Load
+- assertVisible: "Status: Loaded 3 items"
+- assertVisible: Ready
+- tapOn: Add item
+- tapOn: Add item
+- assertVisible: Item 2
+- tapOn: Item 1
+- tapOn: Crunch
+- assertVisible: "Status: Crunched"

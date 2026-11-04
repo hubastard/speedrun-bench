@@ -1,0 +1,26 @@
+appId: dev.speedrun.flutterbench
+name: Controls
+---
+# Material controls, icon buttons known by their tooltip, a long press, and a tap on a
+# target that also takes double taps (Flutter holds the single tap for 300 ms).
+- launchApp
+- tapOn: Controls
+- tapOn: Wi-Fi
+- tapOn: Accept terms
+- assertVisible: Wi-Fi on, terms accepted
+- assertVisible:
+    text: Wi-Fi
+    checked: true
+- tapOn: Month
+- assertVisible: "Range: Month"
+- tapOn: Increment
+- tapOn: Increment
+- tapOn: Increment
+- tapOn: Decrement
+- assertVisible: "Count: 2"
+- longPressOn: Hold me
+- assertVisible: "Gesture: Held"
+- tapOn: Tap or double tap
+- assertVisible: "Gesture: Tapped once"
+- doubleTapOn: Tap or double tap
+- assertVisible: "Gesture: Tapped twice"

@@ -1,0 +1,28 @@
+appId: dev.speedrun.flutterbench
+name: Sign in
+---
+# Fields tagged with Semantics(identifier:), a validation error, a password field, a
+# checkbox tile, and a loading veil over the form before the next screen.
+- launchApp:
+    clearState: true
+- tapOn: Sign in
+- tapOn:
+    id: submit
+- assertVisible: Enter your email and password
+- tapOn:
+    id: email
+- inputText: ada@example.com
+- tapOn:
+    id: password
+- inputText: s3cret
+- tapOn: Remember me
+- assertVisible:
+    text: Remember me
+    checked: true
+- tapOn:
+    id: submit
+- assertVisible: Signed in as ada@example.com
+- assertVisible: Remembered on this device
+- tapOn: Sign out
+- assertVisible:
+    id: email
