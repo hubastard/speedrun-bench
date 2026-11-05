@@ -26,9 +26,8 @@ built into the app's Android project.
 
 ## Results
 
-Apple M1 Pro (16 GB), an Android 17 emulator and an iPhone 17 Pro simulator (iOS 26.2):
-Speedrun (its current code) and Argent on 2026-10-29, maestro-runner on 2026-10-28, the others on
-2026-10-27. The median of the passing runs, the pass count, and each run's time in seconds:
+<!-- results:journey-runs -->
+Speedrun and Argent on 2026-10-29, maestro-runner on 2026-10-28, Maestro, Appium and XCUITest on 2026-10-27; Apple M1 Pro (16 GB) with the Medium_Phone emulator (Android 17) and the iPhone 17 Pro simulator (iOS 26.2). The median of the passed runs, the pass count, and each run's time in seconds:
 
 | Tool | Android emulator | iOS simulator |
 |---|---|---|
@@ -36,8 +35,9 @@ Speedrun (its current code) and Argent on 2026-10-29, maestro-runner on 2026-10-
 | Appium | 59.4 s, 3/3 passed (59.4, 69.0, 59.1) | 94.1 s, 3/3 passed (94.1, 96.9, 92.7) |
 | maestro-runner | 65.9 s, 2/3 passed (50.7, 81.1, 89.4 ✗) | 49.6 s, 3/3 passed (49.6, 49.9, 49.2) |
 | Argent | 81.5 s, 3/3 passed (80.9, 84.1, 81.5) | 72.2 s, 3/3 passed (72.2, 72.3, 69.0) |
-| XCUITest | | 81.2 s, 3/3 passed (80.5, 81.4, 81.2) |
+| XCUITest |  | 81.2 s, 3/3 passed (80.5, 81.4, 81.2) |
 | Maestro | 126.5 s, 2/3 passed (135.0, 184.9 ✗, 118.1) | 113.1 s, 2/3 passed (113.6, 86.7 ✗, 112.6) |
+<!-- /results:journey-runs -->
 
 ✗: failed (its time stops at the failure). Maestro's failed runs: on iOS its tap on the color
 "Blue" was lost (the product page's photos page on their own, and in React Native a scroll

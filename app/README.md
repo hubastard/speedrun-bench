@@ -69,18 +69,19 @@ Android numbers, shut the iOS simulator down first (`../../speedrun --stop-agent
 
 ## Results
 
-`./bench.sh compare android` and `./bench.sh compare ios`, Apple M1 Pro 16 GB, an Android 17
-emulator and an iPhone 17 Pro simulator (iOS 26.2): Maestro 2.11 on 2026-10-27, Speedrun's
-current code on 2026-10-29 (`./bench.sh test`, against Maestro's same results; on iOS with
-`--animations off`, without which the suite took 585 s instead of 573 s). A failed
-flow's
-time stops at its failure; ~: what it would have taken had it finished the flow, estimated as
-Maestro's time up to the failing step, then speedrun's time for the rest of the flow at
-Maestro's pace on that flow so far (`bench.sh` computes it from both tools' per-command
-times). The drag and onboarding flows changed after Maestro's suite run (sideways
-`scrollUntilVisible`): its rows for them were measured again on their own, the same day, and
-the totals take them in. The popups flow gained checks for popups that never show on
-2026-10-31 (7 s in either tool): its rows are from before.
+`./bench.sh compare android` and `./bench.sh compare ios` (or `./bench.sh test`, against
+Maestro's last results). A failed flow's time stops at its failure; ~: what it would have taken
+had it finished the flow, estimated as Maestro's time up to the failing step, then speedrun's
+time for the rest of the flow at Maestro's pace on that flow so far (`bench.sh` computes it from
+both tools' per-command times). Maestro's rows are from its 2026-10-27 run; the drag and
+onboarding flows changed after it (sideways `scrollUntilVisible`), and its rows for them were
+measured again on their own, the same day. The popups flow gained checks for popups that never
+show on 2026-10-31 (7 s in either tool): its rows are from before. These tables come from
+[`../results`](../results), written again on every full run, where each flow's time in
+Speedrun's last runs is too; this README takes them when Speedrun ships a version.
+
+<!-- results:app-android -->
+Speedrun on 2026-10-29 and Maestro 2.11 on 2026-10-27, on Apple M1 Pro (16 GB) with the Medium_Phone emulator (Android 17):
 
 | Flow (android) | Speedrun | Maestro | Speedup |
 |---|---:|---:|---:|
@@ -109,6 +110,10 @@ the totals take them in. The popups flow gained checks for popups that never sho
 | **Wall clock** | **355 s** | **2816 s** | **7.9x** |
 
 Passed: speedrun 19/19, Maestro 16/19. ✗: failed; ~: estimated.
+<!-- /results:app-android -->
+
+<!-- results:app-ios -->
+Speedrun on 2026-10-29 (`--animations off`) and Maestro 2.11 on 2026-10-27, on Apple M1 Pro (16 GB) with the iPhone 17 Pro simulator (iOS 26.2):
 
 | Flow (ios) | Speedrun | Maestro | Speedup |
 |---|---:|---:|---:|
@@ -137,6 +142,7 @@ Passed: speedrun 19/19, Maestro 16/19. ✗: failed; ~: estimated.
 | **Wall clock** | **573 s** | **2419 s** | **4.2x** |
 
 Passed: speedrun 19/19, Maestro 8/19. ✗: failed; ~: estimated.
+<!-- /results:app-ios -->
 
 Why Maestro failed:
 

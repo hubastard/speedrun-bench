@@ -9,7 +9,8 @@
 # maestro, maestro-runner (~/.maestro-runner/bin, or MAESTRO_RUNNER=<path>), Node (cd appium &&
 # npm install && npm run setup; Argent: cd ../agents && npm install), and Xcode for xcuitest.
 # The device: DEVICE=<serial or simulator UDID>, else the first adb device (Android) or the
-# booted simulator (iOS).
+# booted simulator (iOS). Each tool's runs are recorded in the benchmarks' history (../results/,
+# see ../results.py): NO_RECORD=1 to leave them out.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -102,6 +103,7 @@ for tool in "${TOOLS[@]}"; do
   times=()
   passed_times=()
   passed=0
+  record_runs=
   for i in $(seq 0 "$RUNS"); do
     reset_app
     t0=$(now)
@@ -114,6 +116,7 @@ for tool in "${TOOLS[@]}"; do
       continue
     fi
     echo "== $tool: run $i ${secs} s, exit $status"
+    record_runs="$record_runs $secs:$([ "$status" = 0 ] && echo 1 || echo 0)"
     if [ "$status" = 0 ]; then
       passed=$((passed + 1))
       passed_times+=("$secs")
@@ -122,6 +125,10 @@ for tool in "${TOOLS[@]}"; do
       times+=("$(printf '%.1f' "$secs")✗")
     fi
   done
+  if [ -z "${NO_RECORD:-}" ]; then
+    python3 ../results.py record journey "$PLATFORM" "$tool" --runs "$record_runs" --flow Journey --device "$DEVICE" \
+      || echo "== $tool's runs were not recorded"
+  fi
   median=-
   if [ "$passed" -gt 0 ]; then
     median=$(printf '%s\n' "${passed_times[@]}" | sort -n | awk '{ a[NR] = $1 } END { m = NR % 2 ? a[(NR + 1) / 2] : (a[NR / 2] + a[NR / 2 + 1]) / 2; printf "%.1f s", m }')

@@ -8,7 +8,9 @@
 # OUT=<name>: the table goes to results/<name>.md instead (the runs' output keeps its names).
 # maestro runs only when named: on the Real World App, one run took over 30 minutes.
 # Needs ../../speedrun (./build.sh), ./setup.sh run once, and maestro to run it. The app's
-# servers are started on 127.0.0.1 and stopped at the end (left alone if already up).
+# servers are started on 127.0.0.1 and stopped at the end (left alone if already up). Each
+# tool's runs are recorded in the benchmarks' history (../results/, see ../results.py):
+# NO_RECORD=1 to leave them out.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -66,6 +68,7 @@ for tool in "${TOOLS[@]}"; do
   times=()
   passed_times=()
   passed=0
+  record_runs=
   for i in $(seq 0 "$RUNS"); do
     rm -rf "$APP"/playwright/test-results "$APP"/cypress/cypress
     t0=$(now)
@@ -78,6 +81,7 @@ for tool in "${TOOLS[@]}"; do
       continue
     fi
     echo "== $tool: run $i ${secs} s, exit $status"
+    record_runs="$record_runs $secs:$([ "$status" = 0 ] && echo 1 || echo 0)"
     if [ "$status" = 0 ]; then
       passed=$((passed + 1))
       passed_times+=("$secs")
@@ -86,6 +90,18 @@ for tool in "${TOOLS[@]}"; do
       times+=("$(printf '%.2f' "$secs")✗")
     fi
   done
+  if [ -z "${NO_RECORD:-}" ]; then
+    # The tool, and the browser it ran: Chrome, but Cypress's own Electron, or Firefox.
+    base="${tool%-firefox}"
+    browser=chrome
+    [ "$base" = cypress ] && browser=electron
+    [ "$base" != "$tool" ] && browser=firefox
+    tests=1
+    [ "$APP" = rwa ] && tests=7
+    python3 ../results.py record "web-$APP" "$browser" "$base" --runs "$record_runs" \
+      --flow "$([ "$APP" = rwa ] && echo "Real World App" || echo TodoMVC)" --tests "$tests" --device-name headless \
+      || echo "== $tool's runs were not recorded"
+  fi
   median=-
   if [ "$passed" -gt 0 ]; then
     median=$(printf '%s\n' "${passed_times[@]}" | sort -n | awk '{ a[NR] = $1 } END { m = NR % 2 ? a[(NR + 1) / 2] : (a[NR / 2] + a[NR / 2 + 1]) / 2; printf "%.2f s", m }')

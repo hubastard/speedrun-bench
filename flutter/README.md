@@ -24,6 +24,14 @@ Native.
 ./bench.sh test ios
 ```
 
+## Results
+
+Each flow's time with Speedrun, from [`../results`](../results), written again on every full
+run (where Speedrun's last runs are too); this README takes them when Speedrun ships a version.
+
+<!-- results:flutter -->
+<!-- /results:flutter -->
+
 ## What Flutter's tree looks like to a flow
 
 - **A row's texts are one label.** A `ListTile` with a leading avatar, a title and a subtitle

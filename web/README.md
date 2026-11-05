@@ -24,9 +24,11 @@ same machine, in Chrome and in Firefox:
 
 ### On a Mac, in Chrome
 
-Apple M1 Pro (16 GB), 2026-11-03. The median of three runs after a warm-up, then each run's
-time in seconds. A run's time is the wall clock of the tool's command, its start-up included,
-as a CI job sees it:
+The median of three runs after a warm-up, then each run's time in seconds. A run's time is the
+wall clock of the tool's command, its start-up included, as a CI job sees it.
+
+<!-- results:web-mac-runs -->
+Apple M1 Pro (16 GB): Speedrun, Playwright, Cypress and Maestro on 2026-11-03.
 
 | Tool | TodoMVC | Real World App (7 tests) |
 |---|---|---|
@@ -34,6 +36,7 @@ as a CI job sees it:
 | Playwright | 1.30 s (1.29, 1.30, 1.30) | 5.86 s (5.89, 5.86, 5.83) |
 | Cypress | 3.66 s (3.66, 3.66, 3.66) | 11.32 s (11.33, 11.29, 11.32) |
 | Maestro | failed in every run, after ~60 s | stopped after 30 min: 6 of 7 tests run, 3 passed |
+<!-- /results:web-mac-runs -->
 
 Speedrun, Playwright and Cypress passed every test in every run. The conditions were the same
 for each tool:
@@ -60,11 +63,14 @@ Maestro ran the same flow files as Speedrun:
 
 ### On Linux, in Chrome and Firefox
 
-A GitHub Actions `ubuntu-24.04` runner (4 vCPUs), 2026-11-03, run by
+A GitHub Actions `ubuntu-24.04` runner (4 vCPUs), run by
 [`bench-web.yml`](https://github.com/hubastard/speedrun/blob/main/.github/workflows/bench-web.yml) (in Speedrun's repository): the same tests, conditions and
 medians as above, each tool with its own builds of the browsers (every run's output:
 [`results/linux`](results/linux)). A shared runner is slower than the Mac, and its times vary
 more from day to day: compare the tools within a table.
+
+<!-- results:web-linux-runs -->
+GitHub Actions ubuntu-24.04 runner (4 vCPUs): Speedrun, Playwright and Cypress on 2026-11-03.
 
 | Tool | TodoMVC | Real World App (7 tests) |
 |---|---|---|
@@ -74,6 +80,7 @@ more from day to day: compare the tools within a table.
 | **Speedrun**, Firefox | **2.99 s** (2.99, 2.99, 3.05) | **11.51 s** (11.44, 11.69, 11.51) |
 | Playwright, Firefox | 3.88 s (3.87, 3.88, 4.21) | 15.16 s (15.08, 15.38, 15.16) |
 | Cypress, Firefox | 9.00 s (9.18, 9.00, 8.87) | 21.75 s (21.88, 21.75, 21.74) |
+<!-- /results:web-linux-runs -->
 
 Every tool passed every test in every run. The browsers:
 - **Speedrun:** Chrome for Testing's headless shell 156, and Mozilla's Firefox 159.

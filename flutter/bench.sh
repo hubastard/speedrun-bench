@@ -5,6 +5,8 @@
 #   ./bench.sh test ios|android      the flows with speedrun (pass/fail, per-flow times)
 #   ./bench.sh maestro ios|android   the flows with Maestro
 # Extra arguments go to `speedrun test` / `maestro test` (flow files instead of the folder).
+# A run of every flow is recorded in the benchmarks' history (../results/, see ../results.py):
+# NO_RECORD=1 to leave it out. Each run's report: results/<platform>-<tool>.xml.
 # The device: DEVICE=<serial or simulator UDID>, else the first adb device (Android) or the
 # booted simulator (iOS). Needs ../../speedrun (./build.sh) and Flutter.
 set -euo pipefail
@@ -16,6 +18,7 @@ PLATFORM="${2:?$USAGE}"
 shift 2
 SPEEDRUN="${SPEEDRUN:-$(cd ../.. && pwd)/speedrun}"
 APP_ID=dev.speedrun.flutterbench
+now_ms() { perl -MTime::HiRes=time -e 'printf "%d\n", time*1000'; }
 
 case "$PLATFORM" in
   ios)
@@ -42,13 +45,30 @@ case "$CMD" in
     fi
     echo "== Installed $APP_ID on $DEVICE"
     ;;
-  test)
-    [ $# -gt 0 ] || set -- flows
-    "$SPEEDRUN" test --device "$DEVICE" "$@"
-    ;;
-  maestro)
-    [ $# -gt 0 ] || set -- flows
-    maestro --device "$DEVICE" test "$@"
+  test | maestro)
+    tool=speedrun
+    [ "$CMD" = maestro ] && tool=maestro
+    # The flows folder, unless a flow file or folder is given.
+    full=1
+    run_args=
+    for arg in "$@"; do
+      if [ -e "$arg" ]; then full=0; else run_args="${run_args:+$run_args }$arg"; fi
+    done
+    [ "$full" = 0 ] || set -- "$@" flows
+    mkdir -p results
+    t0=$(now_ms)
+    status=0
+    if [ "$tool" = speedrun ]; then
+      "$SPEEDRUN" test --device "$DEVICE" --format junit --output "results/$PLATFORM-$tool.xml" "$@" || status=$?
+    else
+      maestro --device "$DEVICE" test --format junit --output "results/$PLATFORM-$tool.xml" "$@" || status=$?
+    fi
+    echo "$(( $(now_ms) - t0 ))" > "results/$PLATFORM-$tool.wall"
+    if [ "$full" = 1 ] && [ -z "${NO_RECORD:-}" ]; then
+      python3 ../results.py record flutter "$PLATFORM" "$tool" --results results --device "$DEVICE" --args "$run_args" \
+        || echo "== $tool's run was not recorded"
+    fi
+    exit "$status"
     ;;
   *) echo "$USAGE"; exit 1 ;;
 esac
