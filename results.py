@@ -5,7 +5,7 @@ the pages made from it.
   ./results.py record SUITE PLATFORM TOOL [options]
       Adds one run of TOOL to the history, then writes results/*.md again. The benchmarks'
       scripts call it after a full run (a run of some flows only records nothing). SUITE: app,
-      flutter, journey, web-todomvc, web-rwa. PLATFORM: android, ios, or the browser (chrome,
+      flutter, compose, journey, web-todomvc, web-rwa. PLATFORM: android, ios, or the browser (chrome,
       electron, firefox).
   ./results.py render
       Writes results/*.md again from the history.
@@ -45,6 +45,7 @@ RESULTS = os.environ.get("BENCH_RESULTS") or os.path.join(BENCH, "results")
 SUITES = {
     "app": "Speedrun Bench",
     "flutter": "Flutter Bench",
+    "compose": "Compose Bench",
     "journey": "Journey",
     "web-todomvc": "TodoMVC",
     "web-rwa": "Real World App",
@@ -52,8 +53,8 @@ SUITES = {
 }
 # Seconds' decimals in tables, and how much slower (at least this many seconds, and CHANGE)
 # a time must be to be flagged.
-DECIMALS = {"app": 0, "flutter": 1, "journey": 1, "web-todomvc": 2, "web-rwa": 2, "web-site": 2}
-MIN_CHANGE_S = {"app": 1.0, "flutter": 0.5, "journey": 1.0, "web-todomvc": 0.05, "web-rwa": 0.2, "web-site": 0.2}
+DECIMALS = {"app": 0, "flutter": 1, "compose": 1, "journey": 1, "web-todomvc": 2, "web-rwa": 2, "web-site": 2}
+MIN_CHANGE_S = {"app": 1.0, "flutter": 0.5, "compose": 0.5, "journey": 1.0, "web-todomvc": 0.05, "web-rwa": 0.2, "web-site": 0.2}
 CHANGE = 0.15
 TOOLS = {
     "speedrun": ("Speedrun", None),
@@ -440,7 +441,7 @@ def summary_page(records):
              "pages are written again from it: the latest run of each tool, and Speedrun's last runs, "
              "so a run that got slower shows. Speedrun's README and the benchmarks' own READMEs take "
              "their numbers from here only when Speedrun ships a version (`../results.py readme`).", ""]
-    for suite in ("app", "flutter"):
+    for suite in ("app", "flutter", "compose"):
         recs = runs_of(records, suite)
         if not recs:
             continue
@@ -655,25 +656,28 @@ def block(records, name):
         head = and_list([phrase(r) for r in (ours, theirs) if r])
         return (f"{head}, on {places([r for r in (ours, theirs) if r])}:\n\n"
                 + suite_table(ours, theirs, suite, flows_label=f"Flow ({p})") + "\n\n" + passed_line(ours, theirs))
-    if name == "flutter":
-        recs = {p: latest(records, "flutter", p, "speedrun") for p in ("android", "ios")}
+    if name in ("flutter", "compose"):
+        # Speedrun's times, a column per platform (Compose Bench is Android only).
+        platforms = ("android", "ios") if name == "flutter" else ("android",)
+        recs = {p: latest(records, name, p, "speedrun") for p in platforms}
         if not any(recs.values()):
             return None
         names = sorted({n for r in recs.values() if r for n in r["flows"]})
         rows = []
         for n in names:
             row = [n]
-            for p in ("android", "ios"):
+            for p in platforms:
                 r = recs[p]
                 if r and n in r["flows"]:
                     t, ok = flow_time(r["flows"][n])
-                    row.append(secs(t, "flutter") + ("" if ok else " ✗"))
+                    row.append(secs(t, name) + ("" if ok else " ✗"))
                 else:
                     row.append("–")
             rows.append(row)
-        rows.append(["**All flows**"] + [f"**{secs(total(recs[p]), 'flutter')}**" if recs[p] else "–" for p in ("android", "ios")])
+        rows.append(["**All flows**"] + [f"**{secs(total(recs[p]), name)}**" if recs[p] else "–" for p in platforms])
         lines = [f"- {PLATFORMS[p]}: {phrase(r)}, on {places([r])}." for p, r in recs.items() if r]
-        return "\n".join(lines) + "\n\n" + table(["Flow", "Android", "iOS"], rows, right=[1, 2])
+        return "\n".join(lines) + "\n\n" + table(["Flow"] + [PLATFORMS[p] for p in platforms], rows,
+                                                   right=list(range(1, len(platforms) + 1)))
     raise SystemExit(f"results.py: no block named {name}")
 
 
@@ -700,7 +704,7 @@ def readme(files, records):
 def render(records, out):
     os.makedirs(out, exist_ok=True)
     pages = {"README.md": summary_page(records)}
-    for suite in ("app", "flutter"):
+    for suite in ("app", "flutter", "compose"):
         for p in ("android", "ios"):
             pages[f"{suite}-{p}.md"] = suite_page(records, suite, p)
     for p in ("android", "ios"):
@@ -1054,7 +1058,7 @@ def record(args):
     p, n = passed(rec)
     before = previous(records, records[-1])
     vs = ""
-    if before and args.suite in ("app", "flutter"):
+    if before and args.suite in ("app", "flutter", "compose"):
         vs = f" (the run before: {secs(total(before[0]), args.suite)}, {passed(before[0])[0]}/{passed(before[0])[1]})"
     out = os.path.abspath(args.out)
     shown = os.path.relpath(out, BENCH) if out.startswith(BENCH + os.sep) else out
@@ -1104,7 +1108,7 @@ def main():
         render(load(args.history), args.out)
     elif args.cmd == "readme":
         files = args.files or [f for f in [os.path.join(BENCH, "..", "README.md")] if os.path.exists(f)] + [
-            os.path.join(BENCH, d, "README.md") for d in ("app", "flutter", "journey", "web")]
+            os.path.join(BENCH, d, "README.md") for d in ("app", "flutter", "compose", "journey", "web")]
         readme(files, load(args.history))
     elif args.cmd == "import":
         have = {json.dumps(r, sort_keys=True) for r in load(args.history)}

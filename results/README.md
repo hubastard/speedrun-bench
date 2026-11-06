@@ -13,6 +13,12 @@ Every full run of a benchmark adds its times to [`history.jsonl`](history.jsonl)
 
 Speedrun's speedup over Maestro on the flows both passed: 8.6x on Android (16 flows), 3.0x on iOS (8 flows).
 
+## Compose Bench ([Android](compose-android.md))
+
+| Tool, all flows | Android |
+|---|---|
+| **Speedrun** | **13.6 s**, 4/4 passed · 2026-11-06 |
+
 ## The journey ([Android](journey-android.md), [iOS](journey-ios.md))
 
 | Tool | Android emulator | iOS simulator |

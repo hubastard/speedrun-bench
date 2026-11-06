@@ -1,0 +1,12 @@
+appId: dev.speedrun.composebench
+name: Authorize
+---
+# A plain Activity started for a result from a bottom sheet, its one Button finishing it
+# (speedrun issue #9): the Button is read as soon as it is drawn, while its window still opens.
+- launchApp
+- tapOn: Agent panel
+- tapOn: Authorize
+- tapOn: Close authorization browser
+- assertVisible: Agent panel
+- back
+- assertVisible: Authorization browser closed

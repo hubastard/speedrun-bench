@@ -10,6 +10,7 @@ clone. The scripts find `speedrun` there (`../../speedrun`); outside a Speedrun 
 |---|---|
 | [`app/`](app) | **Speedrun Bench**, a React Native (Expo) app built to trip up UI test tools, and its 21 flows: Speedrun's regression suite on Android and iOS, and its benchmark against Maestro. |
 | [`flutter/`](flutter) | **Flutter Bench**, a Flutter app with the Flutter patterns UI test tools trip on, and its 8 flows, on Android and iOS. |
+| [`compose/`](compose) | **Compose Bench**, a Jetpack Compose app with the Compose patterns UI test tools trip on, and its 4 flows, on Android. |
 | [`journey/`](journey) | One user journey on Speedrun Bench with each black-box test tool: Speedrun, Maestro, Appium, maestro-runner, Argent, XCUITest. |
 | [`web/`](web) | The web benchmark: Speedrun, Playwright, Cypress and Maestro on TodoMVC and Cypress's Real World App, in Chrome and Firefox. |
 | [`agents/`](agents) | AI agents trying out a feature through each tool's MCP server. |
@@ -19,8 +20,9 @@ clone. The scripts find `speedrun` there (`../../speedrun`); outside a Speedrun 
 ## Results
 
 Every full run of a benchmark (`app/bench.sh test|maestro|compare`, `flutter/bench.sh
-test|maestro` without flow files, `journey/run.sh`, `web/run.sh`) adds its times to
-[`results/history.jsonl`](results/history.jsonl), and `results.py` writes
+test|maestro` and `compose/bench.sh test|maestro` without flow files, `journey/run.sh`,
+`web/run.sh`) adds its times to [`results/history.jsonl`](results/history.jsonl), and
+`results.py` writes
 [`results/`](results)'s pages again from it: a summary, and a page per benchmark with each
 flow's time, the change since Speedrun's run before, and Speedrun's last runs side by side, so a
 run that got slower shows. Commit `results/` with the rest. `NO_RECORD=1` leaves a run out (a

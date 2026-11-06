@@ -1,0 +1,20 @@
+appId: dev.speedrun.composebench
+name: Tabs
+---
+# Material 3 tabs over a pager (speedrun issue #9): a page loads once the pager settles on it.
+# A tab's label is listed beside the tab's own node, which covers it.
+- launchApp
+- tapOn: Topics
+- assertVisible: Topic 1 loaded
+- tapOn: Topic 3
+- assertVisible: Topic 3 loaded
+- tapOn: Topic 2
+- assertVisible: Topic 2 loaded
+- swipe:
+    start: 90%, 60%
+    end: 10%, 60%
+- assertVisible: Topic 3 loaded
+- tapOn: Topic 4
+- assertVisible: Topic 4 loaded
+- tapOn: Close topics
+- assertVisible: Compose Bench

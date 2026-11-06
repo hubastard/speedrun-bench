@@ -1,0 +1,33 @@
+appId: dev.speedrun.composebench
+name: Sheet rows
+---
+# Rows of a lazy list in a modal bottom sheet, tapped after a scroll and a swipe (speedrun
+# issue #9): the list is at its end, the row near the sheet's bottom edge. A row opens its
+# detail at once, then, the second time, once the sheet has hidden.
+- launchApp
+- tapOn: Agent panel
+- scrollUntilVisible:
+    element: Morning briefing
+    direction: DOWN
+- swipe:
+    start: 50%, 70%
+    end: 50%, 40%
+    duration: 400
+- waitForAnimationToEnd
+- tapOn: Morning briefing
+- assertVisible: "Detail: Morning briefing"
+- assertVisible: More actions
+- back
+- tapOn: Agent panel, hide first
+- scrollUntilVisible:
+    element: Evening recap
+    direction: DOWN
+- swipe:
+    start: 50%, 70%
+    end: 50%, 40%
+    duration: 400
+- waitForAnimationToEnd
+- tapOn: Evening recap
+- assertVisible: "Detail: Evening recap"
+- tapOn: Back to home
+- assertVisible: Compose Bench
