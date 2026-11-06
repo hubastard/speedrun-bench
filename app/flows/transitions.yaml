@@ -32,4 +32,7 @@ tags: [lab, transitions]
 - tapOn:
     id: transfer-reference
 - inputText: rent
+# The line under the field is under the keyboard on a shorter screen (1080x2340 at 440 dpi):
+# the keyboard is a window over it, so the line is not visible.
+- hideKeyboard
 - assertVisible: 'Reference: rent'

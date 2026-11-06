@@ -85,6 +85,10 @@ tags: [lab, selectors]
 - assertVisible:
     id: notify-me
     checked: true
+# Below the screen's edge on a shorter screen (1080x2340 at 440 dpi).
+- scrollUntilVisible:
+    element:
+      id: hide-me
 - assertVisible:
     id: hide-me
     checked: false
