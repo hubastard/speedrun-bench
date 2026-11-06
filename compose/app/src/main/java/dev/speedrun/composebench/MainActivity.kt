@@ -88,6 +88,7 @@ fun App() {
     var detail by remember { mutableStateOf<String?>(null) }
     var authorized by remember { mutableStateOf("Not authorized") }
     var agentTabs by remember { mutableStateOf(false) }
+    var skill by remember { mutableStateOf(false) }
     BackHandler(enabled = detail != null || screen != "home") {
         if (detail != null) detail = null else screen = "home"
     }
@@ -103,6 +104,7 @@ fun App() {
                     Button(onClick = { panel = Panel.OpenAtOnce }, Modifier.testTag("open-panel")) { Text("Agent panel") }
                     Button(onClick = { panel = Panel.OpenOnceHidden }, Modifier.testTag("open-panel-hide")) { Text("Agent panel, hide first") }
                     Button(onClick = { agentTabs = true }, Modifier.testTag("open-agent-tabs")) { Text("Agent tabs") }
+                    Button(onClick = { skill = true }, Modifier.testTag("open-skill")) { Text("Skill details") }
                     Button(onClick = { screen = "topics" }, Modifier.testTag("open-topics")) { Text("Topics") }
                     Button(onClick = { screen = "form" }, Modifier.testTag("open-form")) { Text("Form") }
                     Text(authorized, Modifier.testTag("authorized"))
@@ -111,6 +113,7 @@ fun App() {
         }
     }
     if (agentTabs) AgentTabs(onClose = { agentTabs = false })
+    if (skill) SkillDetails(onClose = { skill = false })
     if (panel != Panel.Closed) {
         AgentPanel(
             mode = panel,
@@ -204,6 +207,31 @@ private fun AgentTabs(onClose: () -> Unit) {
     }
 }
 
+// A detail sheet, and an editor sheet over it: the system back closes the editor, then the
+// detail.
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+private fun SkillDetails(onClose: () -> Unit) {
+    var editing by remember { mutableStateOf(false) }
+    ModalBottomSheet(onDismissRequest = onClose) {
+        Column(Modifier.fillMaxWidth().padding(16.dp).semantics { testTagsAsResourceId = true }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Daily tide report", fontSize = 20.sp)
+            Text("Every morning, look up the tide tables and send a summary.")
+            Button(onClick = { editing = true }, Modifier.testTag("edit-skill")) { Text("Edit skill") }
+        }
+    }
+    if (editing) {
+        var name by remember { mutableStateOf("Daily tide report") }
+        ModalBottomSheet(onDismissRequest = { editing = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+            Column(Modifier.fillMaxWidth().padding(16.dp).semantics { testTagsAsResourceId = true }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Edit the skill", fontSize = 20.sp)
+                OutlinedTextField(name, { name = it }, Modifier.testTag("skill-name"), label = { Text("Skill name") })
+                Button(onClick = { editing = false }, Modifier.testTag("save-skill")) { Text("Save") }
+            }
+        }
+    }
+}
+
 @Composable
 private fun Detail(label: String, onBack: () -> Unit) {
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -252,6 +280,7 @@ private fun Form(onClose: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
+    var handle by remember { mutableStateOf("") }
     var signedIn by remember { mutableStateOf("Not signed in") }
     val emailFocus = remember { FocusRequester() }
     LaunchedEffect(Unit) { emailFocus.requestFocus() }
@@ -262,6 +291,13 @@ private fun Form(onClose: () -> Unit) {
             Text("Code")
             TextField(code, { code = it })
         }
+        // The app changes what is typed (upper case): Compose restarts the keyboard's input on
+        // each key.
+        OutlinedTextField(
+            handle, { handle = it.uppercase() }, Modifier.testTag("handle"), label = { Text("Handle") },
+            supportingText = { Text(if (handle.length > 64) "Must be 64 characters or less." else "${handle.length} / 64") },
+            isError = handle.length > 64,
+        )
         Button(onClick = { signedIn = "Signed in as $email / $password / $code" }, Modifier.testTag("sign-in")) { Text("Sign in") }
         Text(signedIn, Modifier.testTag("signed-in"))
         Button(onClick = onClose, Modifier.testTag("close-form")) { Text("Close form") }

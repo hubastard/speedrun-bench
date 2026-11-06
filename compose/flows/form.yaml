@@ -19,5 +19,13 @@ name: Form
 - inputText: '2468'
 - tapOn: Sign in
 - assertVisible: "Signed in as ada@example.com / s3cret / 2468"
+# A field whose app changes what is typed (upper case) restarts the keyboard's input on each
+# key: every character still goes in, in order.
+- tapOn:
+    id: handle
+- inputText: speedrun runs fast
+- assertVisible: SPEEDRUN RUNS FAST
+- assertVisible: "18 / 64"
+- hideKeyboard
 - tapOn: Close form
 - assertVisible: Compose Bench

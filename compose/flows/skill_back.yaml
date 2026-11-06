@@ -1,0 +1,14 @@
+appId: dev.speedrun.composebench
+name: Skill back
+---
+# An editor sheet over a detail sheet: the system back closes the editor,
+# then the detail (speedrun issue #9's reporter, on v0.4.8).
+- launchApp
+- tapOn: Skill details
+- tapOn: Edit skill
+- assertVisible: Edit the skill
+- back
+- assertVisible: Edit skill
+- back
+- assertVisible: Compose Bench
+- assertNotVisible: Daily tide report
