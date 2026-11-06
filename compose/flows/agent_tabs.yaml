@@ -1,0 +1,15 @@
+appId: dev.speedrun.composebench
+name: Agent tabs
+---
+# Tabs in a bottom sheet (speedrun issue #9): leaving the Agents tab shows a dot on it, a node
+# deep in the sheet's tree that Compose sends no event for when no accessibility service is on.
+- launchApp
+- tapOn: Agent tabs
+- assertVisible: Your agents
+- assertNotVisible: Agents, attention needed
+- tapOn: Activity
+- assertVisible: Recent activity
+- assertVisible: Agents, attention needed
+- tapOn: Agents
+- assertVisible: Your agents
+- assertNotVisible: Agents, attention needed

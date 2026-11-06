@@ -11,7 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,6 +51,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
@@ -81,6 +87,7 @@ fun App() {
     var panel by remember { mutableStateOf(Panel.Closed) }
     var detail by remember { mutableStateOf<String?>(null) }
     var authorized by remember { mutableStateOf("Not authorized") }
+    var agentTabs by remember { mutableStateOf(false) }
     BackHandler(enabled = detail != null || screen != "home") {
         if (detail != null) detail = null else screen = "home"
     }
@@ -95,6 +102,7 @@ fun App() {
                     Text("Compose Bench", fontSize = 22.sp)
                     Button(onClick = { panel = Panel.OpenAtOnce }, Modifier.testTag("open-panel")) { Text("Agent panel") }
                     Button(onClick = { panel = Panel.OpenOnceHidden }, Modifier.testTag("open-panel-hide")) { Text("Agent panel, hide first") }
+                    Button(onClick = { agentTabs = true }, Modifier.testTag("open-agent-tabs")) { Text("Agent tabs") }
                     Button(onClick = { screen = "topics" }, Modifier.testTag("open-topics")) { Text("Topics") }
                     Button(onClick = { screen = "form" }, Modifier.testTag("open-form")) { Text("Form") }
                     Text(authorized, Modifier.testTag("authorized"))
@@ -102,6 +110,7 @@ fun App() {
             }
         }
     }
+    if (agentTabs) AgentTabs(onClose = { agentTabs = false })
     if (panel != Panel.Closed) {
         AgentPanel(
             mode = panel,
@@ -157,6 +166,40 @@ private fun AgentPanel(mode: Panel, onOpen: (String) -> Unit, onAuthorized: (Str
                     }
                 }
             }
+        }
+    }
+}
+
+// Tabs in a bottom sheet (speedrun issue #9): leaving the Agents tab shows a dot on it, a
+// 13 px node of its own. Compose sends accessibility events only while an accessibility service
+// is on, so a test tool's node cache does not hear of the dot: the sheet's window has no class
+// a tool can tell Compose by, and 60 numbers come first, past the ~50 nodes a read refreshes.
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+private fun AgentTabs(onClose: () -> Unit) {
+    var tab by remember { mutableIntStateOf(1) }
+    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.fillMaxWidth().semantics { testTagsAsResourceId = true }) {
+            Text("Agent tabs", Modifier.padding(16.dp), fontSize = 20.sp)
+            repeat(6) { row ->
+                Row(Modifier.padding(horizontal = 16.dp)) { repeat(10) { Text("${row * 10 + it} ", fontSize = 12.sp) } }
+            }
+            TabRow(selectedTabIndex = tab) {
+                listOf("Activity", "Agents").forEachIndexed { k, label ->
+                    Tab(selected = tab == k, onClick = { tab = k }, modifier = Modifier.testTag("agent-tab-$k")) {
+                        Row(Modifier.height(48.dp), verticalAlignment = Alignment.CenterVertically) {
+                            if (k == 1 && tab != 1) {
+                                Box(
+                                    Modifier.size(5.dp).clip(CircleShape).background(Color.Red)
+                                        .semantics { contentDescription = "Agents, attention needed" }
+                                )
+                            }
+                            Text(label, Modifier.padding(start = 6.dp))
+                        }
+                    }
+                }
+            }
+            Text(if (tab == 0) "Recent activity" else "Your agents", Modifier.padding(16.dp))
         }
     }
 }

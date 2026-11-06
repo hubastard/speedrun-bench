@@ -7,12 +7,13 @@ Android app. Speedrun Bench (`../app`) shows Compose too, but inside a React Nat
 | Screen | What it has |
 |---|---|
 | Agent panel | A modal bottom sheet (a window of its own) with a lazy list longer than the screen, whose rows are Material 3 `Surface`s with an `onClick`. A row opens its detail screen at once, or once the sheet has hidden (`hide()`, then `invokeOnCompletion`). Its Authorize button starts a plain `Activity` for a result: one View `Button` that finishes it. |
+| Agent tabs | Tabs in a bottom sheet, below 60 numbers: leaving the Agents tab shows a 5 dp dot on it, a node of its own |
 | Topics | Material 3 tabs over a `HorizontalPager` that follows the selected tab; a page loads its content once the pager has settled on it |
 | Form | Material 3 text fields: the focus moves on a tap, and the third field's test tag is on a column around it |
 
 The flows come from issues filed against Speedrun: rows tapped after a scroll and a swipe in a
-sheet, tabs, and an Activity's button tapped as its window opens
-([#9](https://github.com/hubastard/speedrun/issues/9)), and text fields that kept the focus
+sheet, tabs, a dot that comes on a tab in a sheet, and an Activity's button tapped as its
+window opens ([#9](https://github.com/hubastard/speedrun/issues/9)), and text fields that kept the focus
 ([#8](https://github.com/hubastard/speedrun/issues/8)).
 
 ## Run
@@ -39,6 +40,10 @@ run (where Speedrun's last runs are too); this README takes them when Speedrun s
 - **A Material 3 button's or tab's label is listed beside the control's own node.** Speedrun's
   debug log says the label is "covered by" the button or the tab. The tap still goes to the
   label's center, which is inside the control.
+- **Compose sends accessibility events only while an accessibility service is on**, and a
+  test tool's connection is none. A tool's node cache then keeps nodes as they were, and a
+  bottom sheet's or dialog's window has no `ComposeView` to tell Compose by: Speedrun knows
+  Compose's nodes by their extra data keys (`androidx.compose.ui.semantics.id`).
 - **A node fully covered by a sibling drawn after it is left out of the tree.** A clickable
   `Box` laid over a `Text` (its sibling, drawn after it) hides the text from every test tool:
   no flow can find it by its text. Put the click on the text's parent instead.
