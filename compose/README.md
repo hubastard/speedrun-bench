@@ -9,6 +9,8 @@ Android app. Speedrun Bench (`../app`) shows Compose too, but inside a React Nat
 | Agent panel | A modal bottom sheet (a window of its own) with a lazy list longer than the screen, whose rows are Material 3 `Surface`s with an `onClick`. A row opens its detail screen at once, or once the sheet has hidden (`hide()`, then `invokeOnCompletion`). Its Authorize button starts a plain `Activity` for a result: one View `Button` that finishes it. |
 | Agent tabs | Tabs in a bottom sheet, below 60 numbers: leaving the Agents tab shows a 5 dp dot on it, a node of its own |
 | Skill details | A detail sheet, and an editor sheet opened over it: the system back closes one, then the other |
+| Tasks | Tabs, inset, drawn over a list of running tasks whose rows show a spinner each |
+| Ask consent | A dialog that takes no touch in its first 400 ms, as Android's permission dialog guards against taps meant for what was under it |
 | Topics | Material 3 tabs over a `HorizontalPager` that follows the selected tab; a page loads its content once the pager has settled on it |
 | Form | Material 3 text fields: the focus moves on a tap, the third field's test tag is on a column around it, and the fourth changes what is typed (upper case, a 64-character counter), which restarts the keyboard's input on each key |
 

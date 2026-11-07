@@ -1,0 +1,13 @@
+appId: dev.speedrun.composebench
+name: Tasks
+---
+# Tabs drawn over a list whose rows show spinners: a tap on a tab is no tap under a loading
+# overlay (it waited ~17 s, the overlay never going away).
+- launchApp
+- tapOn: Tasks
+- assertVisible: Running task 1
+- tapOn: Done
+- assertVisible: Done task 1
+- tapOn: Running
+- assertVisible: Running task 1
+- tapOn: Close tasks

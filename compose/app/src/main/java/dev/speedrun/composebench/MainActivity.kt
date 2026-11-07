@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -49,6 +50,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
@@ -89,6 +93,8 @@ fun App() {
     var authorized by remember { mutableStateOf("Not authorized") }
     var agentTabs by remember { mutableStateOf(false) }
     var skill by remember { mutableStateOf(false) }
+    var asking by remember { mutableStateOf(false) }
+    var consent by remember { mutableStateOf("Consent: not asked") }
     BackHandler(enabled = detail != null || screen != "home") {
         if (detail != null) detail = null else screen = "home"
     }
@@ -99,6 +105,7 @@ fun App() {
                 d != null -> Detail(d, onBack = { detail = null })
                 screen == "topics" -> Topics(onClose = { screen = "home" })
                 screen == "form" -> Form(onClose = { screen = "home" })
+                screen == "tasks" -> Tasks(onClose = { screen = "home" })
                 else -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Compose Bench", fontSize = 22.sp)
                     Button(onClick = { panel = Panel.OpenAtOnce }, Modifier.testTag("open-panel")) { Text("Agent panel") }
@@ -107,6 +114,9 @@ fun App() {
                     Button(onClick = { skill = true }, Modifier.testTag("open-skill")) { Text("Skill details") }
                     Button(onClick = { screen = "topics" }, Modifier.testTag("open-topics")) { Text("Topics") }
                     Button(onClick = { screen = "form" }, Modifier.testTag("open-form")) { Text("Form") }
+                    Button(onClick = { screen = "tasks" }, Modifier.testTag("open-tasks")) { Text("Tasks") }
+                    Button(onClick = { asking = true }, Modifier.testTag("ask-consent")) { Text("Ask consent") }
+                    Text(consent, Modifier.testTag("consent"))
                     Text(authorized, Modifier.testTag("authorized"))
                 }
             }
@@ -114,6 +124,7 @@ fun App() {
     }
     if (agentTabs) AgentTabs(onClose = { agentTabs = false })
     if (skill) SkillDetails(onClose = { skill = false })
+    if (asking) ConsentDialog(onAnswer = { consent = it; asking = false })
     if (panel != Panel.Closed) {
         AgentPanel(
             mode = panel,
@@ -230,6 +241,56 @@ private fun SkillDetails(onClose: () -> Unit) {
             }
         }
     }
+}
+
+// Tabs drawn over a list that runs under them (its top padding the tabs' height), whose
+// running tasks show a small spinner each. The tabs are inset: what of the list they leave
+// uncovered goes around them, and Compose reports the list's frame as that part's bounding
+// box, the whole list. So the list's frame holds the tabs, and it holds spinners, but it is
+// no loading overlay (a tap on a tab waited ~17 s in an app built so).
+@Composable
+private fun Tasks(onClose: () -> Unit) {
+    var tab by remember { mutableIntStateOf(0) }
+    Column(Modifier.fillMaxSize()) {
+        Button(onClick = onClose, Modifier.padding(16.dp).testTag("close-tasks")) { Text("Close tasks") }
+        Box(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxSize().testTag("task-list"), contentPadding = PaddingValues(top = 88.dp)) {
+                items(12) { k ->
+                    Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(if (tab == 0) "Running task ${k + 1}" else "Done task ${k + 1}", Modifier.weight(1f))
+                        if (tab == 0 && k % 3 == 0) CircularProgressIndicator(Modifier.size(16.dp))
+                    }
+                }
+            }
+            TabRow(selectedTabIndex = tab, Modifier.padding(horizontal = 24.dp, vertical = 16.dp).height(56.dp)) {
+                listOf("Running", "Done").forEachIndexed { k, label ->
+                    Tab(selected = tab == k, onClick = { tab = k }, text = { Text(label) })
+                }
+            }
+        }
+    }
+}
+
+// A dialog that takes no touch in its first 400 ms, as Android's permission dialog guards
+// against taps meant for what was under it: a tap then reaches no button (no ripple, nothing
+// changes), and only a later one answers.
+@Composable
+private fun ConsentDialog(onAnswer: (String) -> Unit) {
+    val shownAt = remember { android.os.SystemClock.uptimeMillis() }
+    AlertDialog(
+        onDismissRequest = {},
+        modifier = Modifier.pointerInput(Unit) {
+            awaitPointerEventScope {
+                while (true) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    if (android.os.SystemClock.uptimeMillis() - shownAt < 400) event.changes.forEach { it.consume() }
+                }
+            }
+        },
+        title = { Text("Allow notifications?") },
+        confirmButton = { TextButton(onClick = { onAnswer("Consent: given") }, Modifier.testTag("consent-allow")) { Text("Allow") } },
+        dismissButton = { TextButton(onClick = { onAnswer("Consent: refused") }) { Text("Don't allow") } },
+    )
 }
 
 @Composable
