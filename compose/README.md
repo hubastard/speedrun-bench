@@ -10,14 +10,18 @@ Android app. Speedrun Bench (`../app`) shows Compose too, but inside a React Nat
 | Agent tabs | Tabs in a bottom sheet, below 60 numbers: leaving the Agents tab shows a 5 dp dot on it, a node of its own |
 | Skill details | A detail sheet, and an editor sheet opened over it: the system back closes one, then the other |
 | Tasks | Tabs, inset, drawn over a list of running tasks whose rows show a spinner each |
-| Ask consent | A dialog that takes no touch in its first 400 ms, as Android's permission dialog guards against taps meant for what was under it |
+| Ask consent | A dialog that ignores its first touch in its first second, as Android's permission dialog ignored a tap right after it came on a slow emulator |
+| Ask notifications | Android's own notification permission dialog (Android 13 and later), a system window over the app |
+| Notes | A text field that misses a key (its 10th edit, once), as a keyboard app on a slow emulator lost one now and then. For a slow app, outside the flows: `adb shell setprop debug.composebench.busy <ms>` holds the main thread on each edit, `debug.composebench.draw <ms>` on each frame of the dot's endless animation |
 | Topics | Material 3 tabs over a `HorizontalPager` that follows the selected tab; a page loads its content once the pager has settled on it |
 | Form | Material 3 text fields: the focus moves on a tap, the third field's test tag is on a column around it, and the fourth changes what is typed (upper case, a 64-character counter), which restarts the keyboard's input on each key |
 
 The flows come from issues filed against Speedrun: rows tapped after a scroll and a swipe in a
 sheet, tabs, a dot that comes on a tab in a sheet, and an Activity's button tapped as its
-window opens ([#9](https://github.com/hubastard/speedrun/issues/9)), and text fields that kept the focus
-([#8](https://github.com/hubastard/speedrun/issues/8)).
+window opens ([#9](https://github.com/hubastard/speedrun/issues/9)), text fields that kept the focus
+([#8](https://github.com/hubastard/speedrun/issues/8)), and from a team's runs on slow CI
+emulators: spinners in a list under tabs, a permission dialog's first tap, characters lost
+in typing.
 
 ## Run
 

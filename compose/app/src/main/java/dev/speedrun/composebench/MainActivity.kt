@@ -12,6 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -95,6 +101,11 @@ fun App() {
     var skill by remember { mutableStateOf(false) }
     var asking by remember { mutableStateOf(false) }
     var consent by remember { mutableStateOf("Consent: not asked") }
+    var notifications by remember { mutableStateOf("Notifications: not asked") }
+    // Android's own permission dialog (Android 13+), another app's window over this one.
+    val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        notifications = if (it) "Notifications: allowed" else "Notifications: denied"
+    }
     BackHandler(enabled = detail != null || screen != "home") {
         if (detail != null) detail = null else screen = "home"
     }
@@ -106,6 +117,7 @@ fun App() {
                 screen == "topics" -> Topics(onClose = { screen = "home" })
                 screen == "form" -> Form(onClose = { screen = "home" })
                 screen == "tasks" -> Tasks(onClose = { screen = "home" })
+                screen == "notes" -> Notes(onClose = { screen = "home" })
                 else -> Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Compose Bench", fontSize = 22.sp)
                     Button(onClick = { panel = Panel.OpenAtOnce }, Modifier.testTag("open-panel")) { Text("Agent panel") }
@@ -115,8 +127,11 @@ fun App() {
                     Button(onClick = { screen = "topics" }, Modifier.testTag("open-topics")) { Text("Topics") }
                     Button(onClick = { screen = "form" }, Modifier.testTag("open-form")) { Text("Form") }
                     Button(onClick = { screen = "tasks" }, Modifier.testTag("open-tasks")) { Text("Tasks") }
+                    Button(onClick = { screen = "notes" }, Modifier.testTag("open-notes")) { Text("Notes") }
                     Button(onClick = { asking = true }, Modifier.testTag("ask-consent")) { Text("Ask consent") }
                     Text(consent, Modifier.testTag("consent"))
+                    Button(onClick = { askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS) }, Modifier.testTag("ask-notifications")) { Text("Ask notifications") }
+                    Text(notifications, Modifier.testTag("notifications"))
                     Text(authorized, Modifier.testTag("authorized"))
                 }
             }
@@ -271,19 +286,26 @@ private fun Tasks(onClose: () -> Unit) {
     }
 }
 
-// A dialog that takes no touch in its first 400 ms, as Android's permission dialog guards
-// against taps meant for what was under it: a tap then reaches no button (no ripple, nothing
-// changes), and only a later one answers.
+// A dialog that takes no touch right after it comes, as Android's permission dialog ignored a
+// tap ~150 ms after it came on CI's emulators: the first touch in its first second reaches no
+// button (no ripple, nothing changes), and only a later one answers.
 @Composable
 private fun ConsentDialog(onAnswer: (String) -> Unit) {
     val shownAt = remember { android.os.SystemClock.uptimeMillis() }
+    var ignored by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = {},
         modifier = Modifier.pointerInput(Unit) {
             awaitPointerEventScope {
+                var ignoring = false
                 while (true) {
                     val event = awaitPointerEvent(PointerEventPass.Initial)
-                    if (android.os.SystemClock.uptimeMillis() - shownAt < 400) event.changes.forEach { it.consume() }
+                    val down = event.changes.any { it.pressed && !it.previousPressed }
+                    if (down) ignoring = !ignored && android.os.SystemClock.uptimeMillis() - shownAt < 1000
+                    if (ignoring) {
+                        ignored = true
+                        event.changes.forEach { it.consume() }
+                    }
                 }
             }
         },
@@ -362,5 +384,43 @@ private fun Form(onClose: () -> Unit) {
         Button(onClick = { signedIn = "Signed in as $email / $password / $code" }, Modifier.testTag("sign-in")) { Text("Sign in") }
         Text(signedIn, Modifier.testTag("signed-in"))
         Button(onClick = onClose, Modifier.testTag("close-form")) { Text("Close form") }
+    }
+}
+
+// A text field that misses a key: its 10th edit, once, as a keyboard app on a slow emulator
+// lost one now and then (one in ~200 keys, never the first of a word). Typing checks the field
+// and types again from the character missed.
+// For a slow app (not in a flow): `adb shell setprop debug.composebench.busy <ms>` holds the
+// main thread that long on each edit, `debug.composebench.draw <ms>` on each frame of the dot's
+// endless animation (an emulator with a software GPU drew the reporter's screens at 0.5-1 s a
+// frame; at 800 ms, keys queued 10 s and the dispatcher dropped them).
+private const val NOTES_MISSED_EDIT = 10
+
+private fun prop(name: String): Long = try {
+    Class.forName("android.os.SystemProperties").getMethod("get", String::class.java)
+        .invoke(null, name).toString().toLongOrNull() ?: 0L
+} catch (e: Exception) { 0L }
+
+@Composable
+private fun Notes(onClose: () -> Unit) {
+    var notes by remember { mutableStateOf("") }
+    var edits by remember { mutableIntStateOf(0) }
+    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(
+            notes,
+            {
+                if (++edits != NOTES_MISSED_EDIT) notes = it
+                Thread.sleep(prop("debug.composebench.busy"))
+            },
+            Modifier.fillMaxWidth().testTag("notes"),
+            label = { Text("Notes") },
+        )
+        Text("Saved: $notes", Modifier.testTag("saved"))
+        val pulse by rememberInfiniteTransition().animateFloat(0.2f, 1f, infiniteRepeatable(tween(800), RepeatMode.Reverse))
+        Box(Modifier.size(24.dp).drawBehind {
+            Thread.sleep(prop("debug.composebench.draw"))
+            drawCircle(Color(0xFF6750A4), radius = size.minDimension / 2 * pulse)
+        })
+        Button(onClick = onClose, Modifier.testTag("close-notes")) { Text("Close notes") }
     }
 }

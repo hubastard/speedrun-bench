@@ -1,0 +1,13 @@
+appId: dev.speedrun.composebench
+name: Notes
+---
+# A field that misses a key (its 10th edit, once), as a keyboard app on a slow emulator lost
+# one now and then: typing checks the field, and types again from the character missed.
+- launchApp
+- tapOn: Notes
+- tapOn:
+    id: notes
+- inputText: calendar named Dark mode keeps
+- assertVisible: "Saved: calendar named Dark mode keeps"
+- tapOn: Close notes
+- assertVisible: Compose Bench

@@ -1,8 +1,8 @@
 appId: dev.speedrun.composebench
 name: Consent
 ---
-# A dialog that takes no touch in its first 400 ms (as Android's permission dialog): the tap
-# on its button right after it comes changes nothing, and is tapped again.
+# A dialog that ignores its first touch (as Android's permission dialog did on CI's emulators):
+# the tap on its button right after it comes changes nothing, and is tapped again.
 - launchApp
 - tapOn: Ask consent
 - tapOn: Allow

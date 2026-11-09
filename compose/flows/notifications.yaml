@@ -1,0 +1,14 @@
+appId: dev.speedrun.composebench
+name: Notifications
+---
+# Android's notification permission dialog: a system window that came over the app, and took
+# no touch for a moment after (on CI's emulators, a tap on Allow ~150 ms after it came changed
+# nothing). The app's window under it leaves the screen's windows as the dialog's comes in.
+- launchApp:
+    clearState: true
+    permissions:
+      notifications: deny
+- tapOn: Ask notifications
+- tapOn:
+    id: .*permissioncontroller:id/permission_allow_button
+- assertVisible: "Notifications: allowed"
