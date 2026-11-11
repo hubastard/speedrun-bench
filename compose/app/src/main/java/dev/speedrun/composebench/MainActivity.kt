@@ -132,20 +132,25 @@ fun App() {
                     Button(onClick = { screen = "form" }, Modifier.testTag("open-form")) { Text("Form") }
                     Button(onClick = { screen = "tasks" }, Modifier.testTag("open-tasks")) { Text("Tasks") }
                     Button(onClick = { screen = "notes" }, Modifier.testTag("open-notes")) { Text("Notes") }
-                    Button(onClick = { asking = true }, Modifier.testTag("ask-consent")) { Text("Ask consent") }
-                    Text(consent, Modifier.testTag("consent"))
-                    // A press that shows nothing (no ripple, no state drawn) and acts 2 s later, as
-                    // a request sent: a second tap sends it twice.
-                    Text(
-                        "Send",
-                        Modifier.testTag("send")
-                            .clickable(interactionSource = null, indication = null) {
-                                sends++
-                                scope.launch { delay(2000); sent = "Sent: $sends" }
-                            }
-                            .padding(12.dp),
-                    )
-                    Text(sent, Modifier.testTag("sent"))
+                    // Send: a press that shows nothing (no ripple, no state drawn) and acts 2 s later,
+                    // as a request sent: a second tap sends it twice. Beside the consent's rows, so
+                    // the last text still shows on a short screen (Api35's: 2340 px at 440 dpi).
+                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Button(onClick = { asking = true }, Modifier.testTag("ask-consent")) { Text("Ask consent") }
+                        Text(
+                            "Send",
+                            Modifier.testTag("send")
+                                .clickable(interactionSource = null, indication = null) {
+                                    sends++
+                                    scope.launch { delay(2000); sent = "Sent: $sends" }
+                                }
+                                .padding(12.dp),
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                        Text(consent, Modifier.testTag("consent"))
+                        Text(sent, Modifier.testTag("sent"))
+                    }
                     Button(onClick = { askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS) }, Modifier.testTag("ask-notifications")) { Text("Ask notifications") }
                     Text(notifications, Modifier.testTag("notifications"))
                     Text(authorized, Modifier.testTag("authorized"))
