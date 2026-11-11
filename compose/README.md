@@ -10,7 +10,7 @@ Android app. Speedrun Bench (`../app`) shows Compose too, but inside a React Nat
 | Agent tabs | Tabs in a bottom sheet, below 60 numbers: leaving the Agents tab shows a 5 dp dot on it, a node of its own |
 | Skill details | A detail sheet, and an editor sheet opened over it: the system back closes one, then the other |
 | Tasks | Tabs, inset, drawn over a list of running tasks whose rows show a spinner each |
-| Ask consent | A dialog that ignores its first touch in its first second, as Android's permission dialog ignored a tap right after it came on a slow emulator |
+| Ask consent | A dialog that ignores its first touch in its first second, as Android's permission dialog ignored a tap right after it came on a slow emulator; then Send, a press that shows nothing and acts 2 s later, as a request sent (a second tap sends it twice) |
 | Ask notifications | Android's own notification permission dialog (Android 13 and later), a system window over the app |
 | Notes | A text field that misses a key (its 10th edit, once), as a keyboard app on a slow emulator lost one now and then. For a slow app, outside the flows: `adb shell setprop debug.composebench.busy <ms>` holds the main thread on each edit, `debug.composebench.draw <ms>` on each frame of the dot's endless animation |
 | Topics | Material 3 tabs over a `HorizontalPager` that follows the selected tab; a page loads its content once the pager has settled on it |

@@ -7,3 +7,8 @@ name: Consent
 - tapOn: Ask consent
 - tapOn: Allow
 - assertVisible: "Consent: given"
+# Then a press that shows nothing and acts 2 s later (a request sent), the first tap in the
+# app's window since the dialog closed: once. Speedrun 0.4.10 to 0.4.12 took the app's window,
+# another than the dialog's, for one that had just come, and tapped again (sent twice).
+- tapOn: Send
+- assertVisible: "Sent: 1"

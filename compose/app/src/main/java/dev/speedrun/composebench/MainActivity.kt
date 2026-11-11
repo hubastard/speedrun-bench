@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -101,6 +102,9 @@ fun App() {
     var skill by remember { mutableStateOf(false) }
     var asking by remember { mutableStateOf(false) }
     var consent by remember { mutableStateOf("Consent: not asked") }
+    var sends by remember { mutableIntStateOf(0) }
+    var sent by remember { mutableStateOf("Sent: none") }
+    val scope = rememberCoroutineScope()
     var notifications by remember { mutableStateOf("Notifications: not asked") }
     // Android's own permission dialog (Android 13+), another app's window over this one.
     val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -130,6 +134,18 @@ fun App() {
                     Button(onClick = { screen = "notes" }, Modifier.testTag("open-notes")) { Text("Notes") }
                     Button(onClick = { asking = true }, Modifier.testTag("ask-consent")) { Text("Ask consent") }
                     Text(consent, Modifier.testTag("consent"))
+                    // A press that shows nothing (no ripple, no state drawn) and acts 2 s later, as
+                    // a request sent: a second tap sends it twice.
+                    Text(
+                        "Send",
+                        Modifier.testTag("send")
+                            .clickable(interactionSource = null, indication = null) {
+                                sends++
+                                scope.launch { delay(2000); sent = "Sent: $sends" }
+                            }
+                            .padding(12.dp),
+                    )
+                    Text(sent, Modifier.testTag("sent"))
                     Button(onClick = { askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS) }, Modifier.testTag("ask-notifications")) { Text("Ask notifications") }
                     Text(notifications, Modifier.testTag("notifications"))
                     Text(authorized, Modifier.testTag("authorized"))
