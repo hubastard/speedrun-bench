@@ -30,6 +30,19 @@ Each flow's time with Speedrun, from [`../results`](../results), written again o
 run (where Speedrun's last runs are too); this README takes them when Speedrun ships a version.
 
 <!-- results:flutter -->
+- Android: Speedrun v0.4.12 on 2026-11-11, on Apple M1 Pro (16 GB) with the Medium_Phone emulator (Android 17).
+
+| Flow | Android | iOS |
+|---|---:|---:|
+| Controls | 4.3 s | – |
+| Feed | 6.3 s | – |
+| Keyboard | 3.7 s | – |
+| Motion | 5.3 s | – |
+| Navigation | 3.3 s | – |
+| Pager | 4.5 s | – |
+| Popups | 3.6 s | – |
+| Sign in | 4.0 s | – |
+| **All flows** | **34.8 s** | – |
 <!-- /results:flutter -->
 
 ## What Flutter's tree looks like to a flow

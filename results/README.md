@@ -8,22 +8,28 @@ Every full run of a benchmark adds its times to [`history.jsonl`](history.jsonl)
 
 | Tool, all flows | Android | iOS |
 |---|---|---|
-| **Speedrun** | **355 s**, 19/19 passed · 2026-10-29 | **563 s**, 19/19 passed · 2026-10-29 |
+| **Speedrun** | **401 s**, 21/21 passed · 2026-11-11 | **563 s**, 19/19 passed · 2026-10-29 |
 | Maestro 2.11 | 2798 s, 16/19 passed · 2026-10-27 | 2408 s, 8/19 passed · 2026-10-27 |
 
-Speedrun's speedup over Maestro on the flows both passed: 8.6x on Android (16 flows), 3.0x on iOS (8 flows).
+Speedrun's speedup over Maestro on the flows both passed: 8.1x on Android (16 flows), 3.0x on iOS (8 flows).
+
+## Flutter Bench ([Android](flutter-android.md))
+
+| Tool, all flows | Android |
+|---|---|
+| **Speedrun** | **34.8 s**, 8/8 passed · 2026-11-11 |
 
 ## Compose Bench ([Android](compose-android.md))
 
 | Tool, all flows | Android |
 |---|---|
-| **Speedrun** | **39.9 s**, 10/10 passed · 2026-11-09 |
+| **Speedrun** | **24.6 s**, 10/10 passed · 2026-11-11 |
 
 ## The journey ([Android](journey-android.md), [iOS](journey-ios.md))
 
 | Tool | Android emulator | iOS simulator |
 |---|---:|---:|
-| **Speedrun** | **20.3 s**, 3/3 passed · 2026-10-29 | **25.5 s**, 3/3 passed · 2026-10-29 |
+| **Speedrun** | **20.9 s**, 3/3 passed · 2026-11-11 | **25.5 s**, 3/3 passed · 2026-10-29 |
 | Appium | 59.4 s, 3/3 passed · 2026-10-27 | 94.1 s, 3/3 passed · 2026-10-27 |
 | maestro-runner | 65.9 s, 2/3 passed · 2026-10-28 | 49.6 s, 3/3 passed · 2026-10-28 |
 | Argent | 81.5 s, 3/3 passed · 2026-10-29 | 72.2 s, 3/3 passed · 2026-10-29 |
