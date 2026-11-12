@@ -53,6 +53,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import android.view.WindowManager
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -386,6 +394,8 @@ private fun Form(onClose: () -> Unit) {
     var code by remember { mutableStateOf("") }
     var handle by remember { mutableStateOf("") }
     var signedIn by remember { mutableStateOf("Not signed in") }
+    var clearing by remember { mutableStateOf(false) }
+    var cleared by remember { mutableStateOf("Not cleared") }
     val emailFocus = remember { FocusRequester() }
     LaunchedEffect(Unit) { emailFocus.requestFocus() }
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -404,7 +414,45 @@ private fun Form(onClose: () -> Unit) {
         )
         Button(onClick = { signedIn = "Signed in as $email / $password / $code" }, Modifier.testTag("sign-in")) { Text("Sign in") }
         Text(signedIn, Modifier.testTag("signed-in"))
-        Button(onClick = onClose, Modifier.testTag("close-form")) { Text("Close form") }
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = onClose, Modifier.testTag("close-form")) { Text("Close form") }
+            Button(onClick = { clearing = true }, Modifier.testTag("open-clear")) { Text("Clear") }
+            Text(cleared, Modifier.testTag("cleared"))
+        }
+    }
+    if (clearing) ClearDialog(onAnswer = { cleared = it; clearing = false })
+}
+
+// A dialog whose field takes the focus as it opens, as wide as the screen, its window left where
+// it is when the keyboard comes (adjust nothing): the keyboard covers its buttons, and a tap on
+// one at its center lands on the keyboard. A Material AlertDialog moves up out of its way. Compose
+// leaves out of the tree what the keyboard covers all of (a button's text, a whole button): on
+// Api35 Cancel's top edge shows above the keyboard, its center under it, and it is found by its
+// id; on a taller screen it is clear of the keyboard.
+@Composable
+private fun ClearDialog(onAnswer: (String) -> Unit) {
+    var typed by remember { mutableStateOf("") }
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
+    Dialog(onDismissRequest = {}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+        SideEffect { window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING) }
+        Surface(Modifier.fillMaxWidth().padding(16.dp).semantics { testTagsAsResourceId = true }, shape = MaterialTheme.shapes.large) {
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Clear the form?", fontSize = 22.sp)
+                Text(
+                    "Everything typed in the form goes: the email, the password, the code and the " +
+                        "handle. The fields start empty again, as when the form first opened, and " +
+                        "nothing typed before can be brought back. Signing in again then needs " +
+                        "every field typed anew. Clearing cannot be undone.",
+                )
+                Text("Enter your password to clear it.")
+                OutlinedTextField(typed, { typed = it }, Modifier.fillMaxWidth().focusRequester(focus), label = { Text("Your password") })
+                Spacer(Modifier.height(48.dp))
+                Button(onClick = { onAnswer("Clear: done") }, Modifier.fillMaxWidth(), enabled = typed.isNotEmpty()) { Text("Clear") }
+                OutlinedButton(onClick = { onAnswer("Clear: cancelled") }, Modifier.fillMaxWidth().testTag("clear-cancel")) { Text("Cancel") }
+            }
+        }
     }
 }
 

@@ -14,7 +14,7 @@ Android app. Speedrun Bench (`../app`) shows Compose too, but inside a React Nat
 | Ask notifications | Android's own notification permission dialog (Android 13 and later), a system window over the app |
 | Notes | A text field that misses a key (its 10th edit, once), as a keyboard app on a slow emulator lost one now and then. For a slow app, outside the flows: `adb shell setprop debug.composebench.busy <ms>` holds the main thread on each edit, `debug.composebench.draw <ms>` on each frame of the dot's endless animation |
 | Topics | Material 3 tabs over a `HorizontalPager` that follows the selected tab; a page loads its content once the pager has settled on it |
-| Form | Material 3 text fields: the focus moves on a tap, the third field's test tag is on a column around it, and the fourth changes what is typed (upper case, a 64-character counter), which restarts the keyboard's input on each key |
+| Form | Material 3 text fields: the focus moves on a tap, the third field's test tag is on a column around it, and the fourth changes what is typed (upper case, a 64-character counter), which restarts the keyboard's input on each key; then that field erased after a tap inside its text, and a dialog whose field takes the focus as it opens, its Cancel button under the keyboard |
 
 The flows come from issues filed against Speedrun: rows tapped after a scroll and a swipe in a
 sheet, tabs, a dot that comes on a tab in a sheet, and an Activity's button tapped as its

@@ -27,5 +27,26 @@ name: Form
 - assertVisible: SPEEDRUN RUNS FAST
 - assertVisible: "18 / 64"
 - hideKeyboard
+# eraseText erases all of a field that holds no more than it erases, wherever the tap put the
+# cursor: a tap at this field's center lands inside its text. Speedrun 0.4.13 (and Maestro)
+# erased only what was before the cursor, and the text typed next went in front of the rest
+# ("FASTS FAST").
+- tapOn:
+    id: handle
+- eraseText: 40
+- inputText: fast
+- assertVisible:
+    id: handle
+    text: FAST
+- assertVisible: "4 / 64"
+- hideKeyboard
+# A dialog whose field takes the focus as it opens, and whose buttons the keyboard then covers:
+# a tap on Cancel hides the keyboard first. Speedrun 0.4.13 (and Maestro) tapped the keyboard
+# there, and the dialog stayed.
+- tapOn: Clear
+- assertVisible: Clear the form?
+- tapOn:
+    id: clear-cancel
+- assertVisible: "Clear: cancelled"
 - tapOn: Close form
 - assertVisible: Compose Bench
