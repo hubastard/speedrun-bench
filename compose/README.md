@@ -37,21 +37,21 @@ Each flow's time with Speedrun, from [`../results`](../results), written again o
 run (where Speedrun's last runs are too); this README takes them when Speedrun ships a version.
 
 <!-- results:compose -->
-- Android: Speedrun v0.4.13 on 2026-11-11, on Apple M1 Pro (16 GB) with the Api35 emulator (Android 15).
+- Android: Speedrun v0.4.14 on 2026-11-12, on Apple M1 Pro (16 GB) with the Api35 emulator (Android 15).
 
 | Flow | Android |
 |---|---:|
-| Agent tabs | 2.5 s |
-| Authorize | 1.6 s |
-| Consent | 4.6 s |
-| Form | 3.0 s |
-| Notes | 2.5 s |
+| Agent tabs | 2.6 s |
+| Authorize | 1.4 s |
+| Consent | 4.7 s |
+| Form | 4.6 s |
+| Notes | 1.5 s |
 | Notifications | 0.9 s |
-| Sheet rows | 3.5 s |
+| Sheet rows | 3.6 s |
 | Skill back | 1.8 s |
-| Tabs | 3.4 s |
+| Tabs | 3.7 s |
 | Tasks | 1.5 s |
-| **All flows** | **25.4 s** |
+| **All flows** | **26.3 s** |
 <!-- /results:compose -->
 
 ## What Compose's tree looks like to a flow

@@ -23,7 +23,7 @@ Speedrun's speedup over Maestro on the flows both passed: 8.1x on Android (16 fl
 
 | Tool, all flows | Android |
 |---|---|
-| **Speedrun** | **25.4 s**, 10/10 passed · 2026-11-11 |
+| **Speedrun** | **26.3 s**, 10/10 passed · 2026-11-12 |
 
 ## The journey ([Android](journey-android.md), [iOS](journey-ios.md))
 
